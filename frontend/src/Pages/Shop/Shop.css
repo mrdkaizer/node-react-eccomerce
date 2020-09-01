@@ -1,0 +1,370 @@
+.pagination {
+  margin: 15px auto;
+  display: flex;
+  list-style: none;
+  outline: none;
+}
+.pagination > .active > a {
+  background-color: #47ccde;
+  border-color: #47ccde;
+  color: #fff;
+}
+.pagination > li > a {
+  padding: 5px 10px;
+  outline: none;
+  cursor: pointer;
+}
+.pagination > .active > a,
+.pagination > .active > span,
+.pagination > .active > a:hover,
+.pagination > .active > span:hover,
+.pagination > .active > a:focus,
+.pagination > .active > span:focus {
+  background-color: #47ccde;
+  outline: none;
+}
+.pagination > li > a,
+.pagination > li > span {
+  color: black;
+}
+.pagination > li:first-child > a,
+.pagination > li:first-child > span,
+.pagination > li:last-child > a,
+.pagination > li:last-child > span {
+  border-radius: unset;
+}
+
+#product {
+  max-width: 100%;
+  width: auto;
+}
+
+.number-input input[type="number"] {
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.number-input input[type="number"]::-webkit-inner-spin-button,
+.number-input input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+.number-input {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.number-input button {
+  -webkit-appearance: none;
+  background-color: transparent;
+  border: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: 0;
+  position: relative;
+}
+
+.number-input button:before,
+.number-input button:after {
+  display: inline-block;
+  position: absolute;
+  content: "";
+  height: 2px;
+  transform: translate(-50%, -50%);
+}
+
+.number-input button.plus:after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.number-input input[type="number"] {
+  text-align: center;
+}
+
+.number-input.number-input {
+  border: 1px solid #ced4da;
+  width: 10rem;
+  border-radius: 0.25rem;
+}
+
+.number-input.number-input button {
+  width: 2.6rem;
+  height: 0.7rem;
+}
+
+.number-input.number-input button.minus {
+  padding-left: 10px;
+}
+
+.number-input.number-input button:before,
+.number-input.number-input button:after {
+  width: 0.7rem;
+  background-color: #495057;
+}
+
+.number-input.number-input input[type="number"] {
+  max-width: 4rem;
+  padding: 0.5rem;
+  border: 1px solid #ced4da;
+  border-width: 0 1px;
+  font-size: 1rem;
+  height: 2rem;
+  color: #495057;
+}
+
+@media not all and (min-resolution: 0.001dpcm) {
+  @supports (-webkit-appearance: none) and (stroke-color: transparent) {
+    .number-input.def-number-input.safari_only button:before,
+    .number-input.def-number-input.safari_only button:after {
+      margin-top: -0.3rem;
+    }
+  }
+}
+
+.related-product {
+  padding-bottom: 30px;
+}
+.set-bg {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: top center;
+}
+
+.section-title {
+  margin-bottom: 50px;
+  text-align: center;
+}
+
+.section-title h2 {
+  color: #1c1c1c;
+  font-weight: 700;
+  position: relative;
+}
+
+.section-title h2:after {
+  position: absolute;
+  left: 0;
+  bottom: -15px;
+  right: 0;
+  height: 4px;
+  width: 80px;
+  background: #7fad39;
+  content: "";
+  margin: 0 auto;
+}
+
+.related__product__title {
+  margin-bottom: 70px;
+}
+/* desktops */
+@media only screen and (min-width: 1025px) {
+  .product__item__pic {
+    height: 330px;
+    position: relative;
+    overflow: hidden;
+  }
+}
+/* Tables small computers */
+@media only screen and (max-width: 1025px) {
+  .product__item__pic {
+    height: 280px;
+    position: relative;
+    overflow: hidden;
+  }
+}
+
+@media screen and (max-width: 500px) /* Mobile */ {
+  .product__item__pic {
+    height: calc(100vmin / 2);
+    position: relative;
+    overflow: hidden;
+  }
+}
+
+.product__discount__item:hover
+  .product__discount__item__pic
+  .product__item__pic__hover {
+  bottom: 20px;
+}
+
+.product__item__pic__hover {
+  position: absolute;
+  left: 0;
+  bottom: -50px;
+  width: 100%;
+  text-align: center;
+  -webkit-transition: all, 0.5s;
+  -moz-transition: all, 0.5s;
+  -ms-transition: all, 0.5s;
+  -o-transition: all, 0.5s;
+  transition: all, 0.5s;
+}
+
+.product__item__pic__hover li {
+  list-style: none;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.product__item__pic__hover li:last-child {
+  margin-right: 0;
+}
+
+.product__item__pic__hover li:hover a {
+  background: #7fad39;
+  border-color: #7fad39;
+}
+.product__item__pic__hover li:hover button {
+  background: #7fad39;
+  border-color: #7fad39;
+}
+
+.product__item__pic__hover li:hover a i {
+  color: #ffffff;
+  transform: rotate(360deg);
+}
+
+.product__item__pic__hover li:hover button i {
+  color: #ffffff;
+  transform: rotate(360deg);
+}
+
+.product__item__pic__hover li a {
+  font-size: 16px;
+  color: #1c1c1c;
+  height: 40px;
+  width: 40px;
+  line-height: 40px;
+  text-align: center;
+  border: 1px solid #ebebeb;
+  background: #ffffff;
+  display: block;
+  border-radius: 50%;
+  -webkit-transition: all, 0.5s;
+  -moz-transition: all, 0.5s;
+  -ms-transition: all, 0.5s;
+  -o-transition: all, 0.5s;
+  transition: all, 0.5s;
+}
+.product__item__pic__hover li button {
+  font-size: 16px;
+  color: #1c1c1c;
+  height: 40px;
+  width: 40px;
+  line-height: 40px;
+  text-align: center;
+  border: 1px solid #ebebeb;
+  background: #ffffff;
+  display: block;
+  border-radius: 50%;
+  -webkit-transition: all, 0.5s;
+  -moz-transition: all, 0.5s;
+  -ms-transition: all, 0.5s;
+  -o-transition: all, 0.5s;
+  transition: all, 0.5s;
+}
+
+.product__item__pic__hover li a i {
+  position: relative;
+  transform: rotate(0);
+  -webkit-transition: all, 0.3s;
+  -moz-transition: all, 0.3s;
+  -ms-transition: all, 0.3s;
+  -o-transition: all, 0.3s;
+  transition: all, 0.3s;
+}
+.product__item__pic__hover li button i {
+  position: relative;
+  transform: rotate(0);
+  -webkit-transition: all, 0.3s;
+  -moz-transition: all, 0.3s;
+  -ms-transition: all, 0.3s;
+  -o-transition: all, 0.3s;
+  transition: all, 0.3s;
+}
+
+.product__item:hover .product__item__pic .product__item__pic__hover {
+  bottom: 20px;
+}
+
+.product__item__pic__hover {
+  position: absolute;
+  left: 0;
+  bottom: -50px;
+  width: 100%;
+  text-align: center;
+  -webkit-transition: all, 0.5s;
+  -moz-transition: all, 0.5s;
+  -ms-transition: all, 0.5s;
+  -o-transition: all, 0.5s;
+  transition: all, 0.5s;
+}
+
+.product__item__pic__hover li {
+  list-style: none;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.product__item__pic__hover li:last-child {
+  margin-right: 0;
+}
+
+.product__item__pic__hover li:hover a {
+  background: #7fad39;
+  border-color: #7fad39;
+}
+
+.product__item__pic__hover li:hover a i {
+  color: #ffffff;
+  transform: rotate(360deg);
+}
+
+.product__item__pic__hover li a {
+  font-size: 16px;
+  color: #1c1c1c;
+  height: 40px;
+  width: 40px;
+  line-height: 40px;
+  text-align: center;
+  border: 1px solid #ebebeb;
+  background: #ffffff;
+  display: block;
+  border-radius: 50%;
+  -webkit-transition: all, 0.5s;
+  -moz-transition: all, 0.5s;
+  -ms-transition: all, 0.5s;
+  -o-transition: all, 0.5s;
+  transition: all, 0.5s;
+}
+
+.product__item__pic__hover li a i {
+  position: relative;
+  transform: rotate(0);
+  -webkit-transition: all, 0.3s;
+  -moz-transition: all, 0.3s;
+  -ms-transition: all, 0.3s;
+  -o-transition: all, 0.3s;
+  transition: all, 0.3s;
+}
+
+.product__item__text {
+  text-align: center;
+  padding-top: 15px;
+}
+
+.product__item__text h6 {
+  margin-bottom: 10px;
+}
+
+.product__item__text h6 a {
+  color: #252525;
+}
+
+.product__item__text h5 {
+  color: #252525;
+  font-weight: 700;
+}

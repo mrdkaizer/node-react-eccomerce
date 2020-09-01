@@ -1,0 +1,28 @@
+{
+  "name": "online_shop",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently \"NODE_ENV=development nodemon src/index.js\" \" cd frontend && npm start\""
+  },
+  "author": "Demetris Kaizer",
+  "license": "ISC",
+  "dependencies": {
+    "@coreui/icons": "^1.0.1",
+    "@coreui/icons-react": "^1.0.2",
+    "@coreui/react": "^3.2.3",
+    "bcryptjs": "^2.4.3",
+    "concurrently": "^5.3.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "hbs": "^4.1.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.28",
+    "nodemailer": "^6.4.11",
+    "randomstring": "^1.1.5",
+    "react-loadingg": "^1.7.2",
+    "validator": "^13.1.1"
+  }
+}
