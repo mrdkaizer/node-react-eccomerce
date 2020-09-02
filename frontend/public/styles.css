@@ -23,8 +23,8 @@ html {
   display: inline-block;
   margin: 0;
   position: absolute;
-  top: 50%;
-  right: 50%;
+  top: 45%;
+  left: 45%;
   width: 80px;
   height: 80px;
 }
