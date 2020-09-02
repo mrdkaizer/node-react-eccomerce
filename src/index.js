@@ -10,7 +10,6 @@ const orderRouter = require("./routers/order");
 
 const app = express();
 if (process.env.NODE_ENV === "development") {
-  console.log("true");
   const cors = require("cors");
   app.use(cors());
 }

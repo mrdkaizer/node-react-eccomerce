@@ -33,7 +33,6 @@ router.post("/user/reset", async (req, res) => {
     );
     res.send();
   } catch (e) {
-    console.log(e);
     res.status(500).send();
   }
 });
