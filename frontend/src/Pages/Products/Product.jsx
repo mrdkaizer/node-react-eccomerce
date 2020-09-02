@@ -127,18 +127,14 @@ class Product extends Component {
 
                   <div className="cable-choose">
                     <div className="def-number-input number-input safari_only">
-                      <center>
-                        <button onClick={this.sub} className="minus"></button>
-                      </center>
+                      <button onClick={this.sub} className="minus"></button>
                       <input
                         className="quantity"
                         value={this.state.product.quantity}
                         type="number"
                         readOnly
                       />
-                      <center>
-                        <button onClick={this.add} className="plus"></button>
-                      </center>
+                      <button onClick={this.add} className="plus"></button>
                     </div>
                   </div>
                 </div>

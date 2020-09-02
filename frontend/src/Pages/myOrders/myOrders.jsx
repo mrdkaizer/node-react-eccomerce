@@ -1,11 +1,13 @@
 import { getFetch } from "../../Utils/communication";
+import { Error } from "../../Components/Message";
 
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { Error } from "../../Components/Message";
+import { BoxLoading } from "react-loadingg";
 
 function Orders(props) {
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
@@ -13,6 +15,7 @@ function Orders(props) {
         if (props.tokenProps.token) {
           const myOrders = await getFetch("/order", props.tokenProps.token);
           setOrders(myOrders);
+          setLoading(false);
         } else {
           window.location.href = "/login";
         }
@@ -23,7 +26,13 @@ function Orders(props) {
     fetchData();
   }, [props.tokenProps.token]);
 
-  return orders.length === 0 ? (
+  return loading ? (
+    <div>
+      <BoxLoading />
+      <div className="p-5"></div>
+      <div className="p-5"></div>
+    </div>
+  ) : orders.length === 0 ? (
     <Error error="You have no orders associated with your account yet." />
   ) : (
     <div className="table-responsive">

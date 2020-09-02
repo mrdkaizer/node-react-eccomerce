@@ -63,7 +63,7 @@ function Checkout(props) {
       country: values.country,
       termsCheck: term,
     };
-
+    let token;
     //register first before making an order...
     if (!loggedin && register) {
       try {
@@ -76,6 +76,7 @@ function Checkout(props) {
           const json = await response.json();
           formRef.current.reset();
           props.addToken(json.token);
+          token = json.token;
         }
         setLoggedin(true);
       } catch (e) {
@@ -103,7 +104,7 @@ function Checkout(props) {
       });
     }
 
-    if (loggedin) {
+    if (loggedin || register) {
       // place the order as a user
       const response = await myFetch(
         "/order/user",
@@ -113,7 +114,7 @@ function Checkout(props) {
           shipping: cart.shipping,
           total: cart.total,
         },
-        props.tokenProps.token
+        props.tokenProps.token ? props.tokenProps.token : token
       );
 
       if (response.status === 201) {

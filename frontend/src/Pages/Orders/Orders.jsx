@@ -4,34 +4,41 @@ import NotFound from "../../Components/NotFound";
 
 import React, { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
+import { BoxLoading } from "react-loadingg";
 
 function Orders(props) {
   const [order, setOrder] = useState({});
   const [products, setProducts] = useState([]);
   const [notFound, setNotFound] = useState(true);
+  const [loading, setLoading] = useState(true);
   const mountTimes = useRef(0);
 
   useEffect(() => {
     const fetchData = async () => {
-      const {
-        match: { params },
-      } = props;
+      try {
+        const {
+          match: { params },
+        } = props;
 
-      const loadOrder = await getFetch(`/order/${params.id}`);
+        const loadOrder = await getFetch(`/order/${params.id}`);
 
-      if (!loadOrder) {
-        return;
+        if (!loadOrder) {
+          return setLoading(false);
+        }
+
+        const createProducts = [];
+        for (let i = 0; i < loadOrder.cart.length; i++) {
+          createProducts[loadOrder.cart[i].product] = await getFetch(
+            `/product/${loadOrder.cart[i].product}`
+          );
+        }
+        setOrder(loadOrder);
+        setProducts(createProducts);
+        setNotFound(false);
+        setLoading(false);
+      } catch (e) {
+        return setLoading(false);
       }
-
-      const createProducts = [];
-      for (let i = 0; i < loadOrder.cart.length; i++) {
-        createProducts[loadOrder.cart[i].product] = await getFetch(
-          `/product/${loadOrder.cart[i].product}`
-        );
-      }
-      setOrder(loadOrder);
-      setProducts(createProducts);
-      setNotFound(false);
     };
 
     // just load the first time of mounting
@@ -41,7 +48,13 @@ function Orders(props) {
     }
   }, [props]);
 
-  return notFound ? (
+  return loading ? (
+    <div>
+      <BoxLoading />
+      <div className="p-5"></div>
+      <div className="p-5"></div>
+    </div>
+  ) : notFound ? (
     <NotFound />
   ) : (
     <div className="">
