@@ -30,6 +30,7 @@ router.post("/order/user", auth, async (req, res) => {
 
     res.status(201).send();
   } catch (e) {
+    console.log(e);
     res.status(400).send();
   }
 });
@@ -46,7 +47,7 @@ router.post("/order", async (req, res) => {
       postal,
       country,
     } = req.body;
-
+    console.log(email);
     let cartArray = [];
 
     for (let i = 0; i < cart.length; i++) {
@@ -73,6 +74,7 @@ router.post("/order", async (req, res) => {
 
     res.status(201).send();
   } catch (e) {
+    console.log(e);
     res.status(400).send();
   }
 });

@@ -3,21 +3,23 @@ import { validation } from "../../Utils/accountValidation";
 import { updateCart } from "../../actions/updateAction";
 import { addToken } from "../../actions/addAction";
 import { useForm } from "../../hooks/form-hook";
+import { useCart } from "../../hooks/cart-hook";
+import { Error, Success } from "../../Components/Message";
 import { updateCustomer } from "../../Utils/updateCustomer";
 
 import { connect } from "react-redux";
 import { Form } from "react-bootstrap";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 function Checkout(props) {
+  const [cart] = useCart(0);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loggedin, setLoggedin] = useState(false);
-  const [cart, setCart] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [shipping, setShipping] = useState(0);
   const [register, setRegister] = useState(false);
   const [term, setTerm] = useState(false);
   const formRef = useRef();
-  const [values, handleChange] = useForm({
+  const [values, handleChange, setValue] = useForm({
     name: "",
     email: "",
     password: "",
@@ -27,6 +29,27 @@ function Checkout(props) {
     city: "",
     country: "",
   });
+
+  const successOrder = () => {
+    props.updateCart({});
+    window.location.href = "/success";
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (props.tokenProps.token) {
+          const c = await getFetch("/customer/", props.tokenProps.token);
+          const u = await getFetch("/user/", props.tokenProps.token);
+          setValue({ ...c, ...u });
+          setLoggedin(true);
+        }
+      } catch (e) {
+        setLoggedin(false);
+      }
+    };
+    fetchData();
+  }, [props.tokenProps.token, setValue]);
 
   const handleOrder = async () => {
     const user = {
@@ -44,78 +67,73 @@ function Checkout(props) {
     //register first before making an order...
     if (!loggedin && register) {
       try {
-        // const response = await register(user);
-        //this.props.addToken(response.token);
+        validation(user);
+        const response = await myFetch("/customer/register", "POST", user);
+        if (response.status === 400) {
+          return setError("This email already exists");
+        }
+        if (response.status === 201) {
+          const json = await response.json();
+          formRef.current.reset();
+          props.addToken(json.token);
+        }
         setLoggedin(true);
       } catch (e) {
-        //this.showError(e);
-        return;
+        return setError(e.message);
       }
     }
-    const stateCart = this.state.cart;
-    let cart = [];
+
+    const stateCart = props.cartProps;
+    let myCart = [];
     let keys = Object.keys(stateCart);
+
+    if (keys.length === 0) {
+      return setError("Your shopping cart is empty");
+    }
 
     for (let i = 0; i < keys.length; i++) {
       if (!stateCart[keys[i]].available) {
-        this.showError(
+        return setError(
           "One or more items in your cart are not available right now."
         );
-        return;
       }
-      cart = cart.concat({
+      myCart = myCart.concat({
         link: stateCart[keys[i]].link,
         quantity: stateCart[keys[i]].quantity,
       });
     }
 
-    if (this.state.loggedin) {
+    if (loggedin) {
       // place the order as a user
       const response = await myFetch(
         "/order/user",
         "POST",
         {
-          cart,
-          shipping: this.state.shipping,
-          total: this.state.total,
+          cart: myCart,
+          shipping: cart.shipping,
+          total: cart.total,
         },
-        this.props.tokenProps.token
+        props.tokenProps.token
       );
 
       if (response.status === 201) {
-        this.success();
+        successOrder();
       } else {
-        this.showError("Something went wrong.. Try again later.");
-        return;
+        return setError("Something went wrong.. Try again later.");
       }
     } else {
       // place the order as quest
       const { name, email, address, postal, city, country } = user;
-      if (name === "") {
-        this.showError("You need to provide your full name.");
-        return;
+      if (
+        name === "" ||
+        email === "" ||
+        address === "" ||
+        postal === "" ||
+        city === "" ||
+        country === ""
+      ) {
+        return setError("All fields are required");
       }
-      if (email === "") {
-        this.showError("You need to provide your email.");
-        return;
-      }
-      if (address === "") {
-        this.showError("You need to provide your address.");
-        return;
-      }
-      if (postal === "") {
-        this.showError("You need to provide your postal code.");
-        return;
-      }
-      if (city === "") {
-        this.showError("You need to provide your city.");
-        return;
-      }
-      if (country === "") {
-        this.showError("You need to provide your country.");
-        return;
-      }
-
       const response = await myFetch("/order/", "POST", {
         name,
         email,
@@ -123,108 +141,32 @@ function Checkout(props) {
         postal,
         city,
         country,
-        cart,
-        shipping: this.state.shipping,
-        total: this.state.total,
+        cart: myCart,
+        shipping: cart.shipping,
+        total: cart.total,
       });
 
       if (response.status === 201) {
-        this.success();
+        successOrder();
       } else {
-        this.showError("Something went wrong! Try another email.");
-        return;
+        setError("Something went wrong! Try another email.");
       }
     }
   };
 
-  const handleRemember = () => {
-    if (this.createAccount.current.className === "") {
-      this.createAccount.current.className = "d-none";
-      this.setState({ register: false });
-    } else {
-      this.createAccount.current.className = "";
-      this.setState({ register: true });
-    }
-  };
-
-  const handleCheck = () => {
-    this.setState({ termsCheck: !this.state.termsCheck });
-  };
-
-  // async componentDidMount() {
-  //   const cartProducts = this.props.cartProps;
-  //   const keys = Object.keys(cartProducts);
-  //   let total = 0;
-
-  //   if (keys.length < 1) {
-  //     window.location.href = "/cart";
-  //     return;
-  //   }
-
-  //   for (let i = 0; i < keys.length; i++) {
-  //     const link = cartProducts[keys[i]].link;
-  //     const product = await getFetch(`/product/${link}`);
-
-  //     // this product must have been delete. remove it from state.
-  //     if (!product) {
-  //       delete cartProducts[link];
-  //       continue;
-  //     }
-
-  //     //update product just keep the quantity
-  //     product.quantity = cartProducts[keys[i]].quantity;
-
-  //     //update websites total
-  //     total += product.quantity * product.price;
-
-  //     cartProducts[link] = product;
-  //   }
-
-  //   //update shipping cost
-  //   const { shippingCharge, shippingThreshold } = this.props.info;
-  //   const shipping = shippingThreshold > total ? shippingCharge : 0;
-
-  //   //update global and current state
-  //   this.props.updateCart(cartProducts);
-  //   this.setState({ cart: cartProducts, total, shipping });
-
-  //   //try update login information:
-  //   if (this.props.tokenProps.token) {
-  //     try {
-  //       const customer = await getFetch(
-  //         "/customer",
-  //         this.props.tokenProps.token
-  //       );
-  //       const user = await getFetch("/user", this.props.tokenProps.token);
-  //       this.Email.current.value = user.email;
-  //       this.FullName.current.value = user.name;
-  //       this.Address.current.value = customer.address;
-  //       this.Postal.current.value = customer.postal;
-  //       this.City.current.value = customer.city;
-  //       this.Country.current.value = customer.country;
-  //       this.setState({ loggedin: true });
-  //     } catch (e) {}
-  //   }
-  // }
-
-  const updateCustomer = async () => {
+  const updateDetails = async () => {
     try {
       const customer = {
-        address: this.Address.current.value,
-        postal: this.Postal.current.value,
-        city: this.City.current.value,
-        country: this.Country.current.value,
+        address: values.address,
+        postal: values.postal,
+        city: values.city,
+        country: values.country,
       };
-      await updateCustomer(customer, this.props.tokenProps.token);
-
-      this.UpdateSuccess.current.className = "alert alert-success";
-      this.UpdateSuccess.current.innerHTML =
-        "Shipping information were updated!";
-      setTimeout(() => {
-        this.UpdateSuccess.current.className = "d-none";
-      }, 2000);
+      await updateCustomer(customer, props.tokenProps.token);
+      setError("");
+      setSuccess("Account has been updated!");
     } catch (e) {
-      this.showError(e);
+      setError(e.message);
     }
   };
 
@@ -234,6 +176,8 @@ function Checkout(props) {
       <div className="container">
         <div className="row">
           <div className="col-md-6">
+            {error ? <Error error={error} /> : <Success success={success} />}
+
             <Form ref={formRef}>
               <Form.Group controlId="fullname">
                 {loggedin ? (
@@ -241,8 +185,9 @@ function Checkout(props) {
                     onChange={handleChange}
                     name="name"
                     type="text"
-                    readOnly
+                    defaultValue={values.name}
                     placeholder="Full Name"
+                    readOnly
                   />
                 ) : (
                   <Form.Control
@@ -253,11 +198,11 @@ function Checkout(props) {
                   />
                 )}
               </Form.Group>
-
               <Form.Group controlId="email">
                 {loggedin ? (
                   <Form.Control
                     onChange={handleChange}
+                    defaultValue={values.email}
                     name="email"
                     type="text"
                     readOnly
@@ -276,33 +221,34 @@ function Checkout(props) {
               <Form.Group controlId="address">
                 <Form.Control
                   onChange={handleChange}
+                  defaultValue={values.address}
                   name="address"
                   type="text"
                   placeholder="Address"
                 />
               </Form.Group>
-
               <Form.Group controlId="postal">
                 <Form.Control
                   onChange={handleChange}
+                  defaultValue={values.postal}
                   name="postal"
                   type="text"
                   placeholder="Postal Code"
                 />
               </Form.Group>
-
               <Form.Group controlId="city">
                 <Form.Control
                   onChange={handleChange}
+                  defaultValue={values.city}
                   name="city"
                   type="text"
                   placeholder="City"
                 />
               </Form.Group>
-
               <Form.Group controlId="country">
                 <Form.Control
                   onChange={handleChange}
+                  defaultValue={values.country}
                   name="country"
                   type="text"
                   placeholder="Country"
@@ -311,7 +257,7 @@ function Checkout(props) {
               {loggedin ? (
                 <div>
                   <button
-                    onClick={updateCustomer}
+                    onClick={updateDetails}
                     className="btn btn-block btn-lg btn-primary"
                     type="button"
                   >
@@ -322,34 +268,39 @@ function Checkout(props) {
               ) : (
                 <Form.Check
                   type="checkbox"
-                  onChange={handleRemember}
+                  onChange={() => {
+                    setRegister(!register);
+                  }}
                   label="Remember me for future purchases"
                 />
               )}
-              <Form.Group controlId="password">
-                <Form.Control
-                  onChange={handleChange}
-                  name="password"
-                  type="password"
-                  placeholder="Password"
-                />
-              </Form.Group>
-
-              <Form.Group controlId="confirm-password">
-                <Form.Control
-                  onChange={handleChange}
-                  name="confirm"
-                  type="password"
-                  placeholder="Confirm Password"
-                />
-              </Form.Group>
-              <Form.Group controlId="terms">
-                <Form.Check
-                  type="checkbox"
-                  onChange={handleCheck}
-                  label="I read and agree with the terms and conditions."
-                />
-              </Form.Group>
+              {register && (
+                <div>
+                  <Form.Group controlId="password">
+                    <Form.Control
+                      onChange={handleChange}
+                      name="password"
+                      type="password"
+                      placeholder="Password"
+                    />
+                  </Form.Group>
+                  <Form.Group controlId="confirm-password">
+                    <Form.Control
+                      onChange={handleChange}
+                      name="confirm"
+                      type="password"
+                      placeholder="Confirm Password"
+                    />
+                  </Form.Group>
+                  <Form.Group controlId="terms">
+                    <Form.Check
+                      type="checkbox"
+                      onChange={() => setTerm(!term)}
+                      label="I read and agree with the terms and conditions."
+                    />
+                  </Form.Group>
+                </div>
+              )}
             </Form>
           </div>
           <div className="col-md-6">
@@ -359,19 +310,20 @@ function Checkout(props) {
                 <li>
                   Subtotal{" "}
                   <span>
-                    {props.info.currencySymbol} {total.toFixed(2)}
+                    {props.info.currencySymbol} {cart.total.toFixed(2)}
                   </span>
                 </li>
                 <li>
                   Shipping{" "}
                   <span>
-                    {props.info.currencySymbol} {shipping}
+                    {props.info.currencySymbol} {cart.shipping}
                   </span>
                 </li>
                 <li>
                   Total{" "}
                   <span>
-                    {props.info.currencySymbol} {(total + shipping).toFixed(2)}
+                    {props.info.currencySymbol}{" "}
+                    {(cart.total + cart.shipping).toFixed(2)}
                   </span>
                 </li>
               </ul>

@@ -22,6 +22,7 @@ const getFetch = async (path, token) => {
 };
 
 const myFetch = async (path, method, data, token) => {
+  console.log(path);
   const response = await fetch(URL + path, {
     method, // *GET, POST, PUT, DELETE, etc.
     mode: "cors", // no-cors, *cors, same-origin
