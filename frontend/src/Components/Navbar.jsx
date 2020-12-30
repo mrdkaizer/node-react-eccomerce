@@ -8,22 +8,14 @@ const NavItem = (props) => {
   const pageURI = window.location.pathname + window.location.search;
   let liStyle =
     props.path === decodeURIComponent(pageURI)
-      ? { textDecoration: "underline" }
+      ? { backgroundColor: "lightgrey" }
       : { color: "" };
-
-  if (decodeURIComponent(pageURI) === "/register" && props.path === "/login") {
-    liStyle = { textDecoration: "underline" };
-  }
-
-  if (decodeURIComponent(pageURI) === "/" && props.path === "/shop") {
-    liStyle = { textDecoration: "underline" };
-  }
 
   const aClassName = props.disabled ? "nav-link disabled" : "nav-link";
   return (
     <li style={liStyle}>
       <a href={props.path} className={aClassName}>
-        {props.name}
+        <i className={props.img}></i> {props.name}
         {props.path === pageURI ? (
           <span className="sr-only">(current)</span>
         ) : (
@@ -58,7 +50,8 @@ function Navigation(props) {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="navbar-nav mr-auto">
-          <NavItem name="Home" path="/shop" />
+          <NavItem img="fas fa-home" path="/" name="Home" href="/"></NavItem>
+
           {categories.map((answer) => {
             return (
               <NavItem
@@ -69,23 +62,44 @@ function Navigation(props) {
             );
           })}
         </Nav>
-        <Nav className="navbar-nav mr-auto"></Nav>
-        <Nav className="navbar-nav mr-auto">
-          {user.name ? (
-            <NavDropdown title={user.name} id="basic-nav-dropdown">
-              <NavDropdown.Item href="/user/orders">Orders</NavDropdown.Item>
+
+        {user.name ? (
+          <Nav className="navbar-nav mr-right">
+            <NavDropdown
+              title={
+                <span>
+                  <li className="fas fa-user-circle"> </li> {user.name}
+                </span>
+              }
+              id="basic-nav-dropdown"
+            >
+              <NavDropdown.Item href="/user/orders">
+                <i className="fas fa-shopping-basket"></i> Orders
+              </NavDropdown.Item>
               <NavDropdown.Item href="/user/edit">
-                Change Details
+                <i className="fas fa-user-edit"></i> Change Details
               </NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item href="/logout">Logout</NavDropdown.Item>
+              <NavDropdown.Item href="/logout">
+                <i className="fas fa-sign-out-alt"></i> Logout
+              </NavDropdown.Item>
             </NavDropdown>
-          ) : (
-            <ul className="navbar-nav">
-              <NavItem name="Account" path="/login" />
-            </ul>
-          )}
-        </Nav>
+            <NavItem
+              img="fas fa-sign-out-alt"
+              path="/logout"
+              name="Logout"
+            ></NavItem>
+          </Nav>
+        ) : (
+          <Nav className="navbar-nav mr-right">
+            <NavItem img="fas fa-sign-in-alt" name="Login" path="/login" />
+            <NavItem
+              img="far fa-user"
+              path="/register"
+              name="Register"
+            ></NavItem>
+          </Nav>
+        )}
       </Navbar.Collapse>
     </Navbar>
   );

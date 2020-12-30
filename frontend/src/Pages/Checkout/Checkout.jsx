@@ -10,6 +10,7 @@ import { updateCustomer } from "../../Utils/updateCustomer";
 import { connect } from "react-redux";
 import { Form } from "react-bootstrap";
 import React, { useState, useRef, useEffect } from "react";
+import { Alert } from "@material-ui/lab";
 
 function Checkout(props) {
   const [cart] = useCart(0);
@@ -173,7 +174,9 @@ function Checkout(props) {
 
   return (
     <section className="">
-      <p className="alert alert-primary">Please check your details below: </p>
+      <Alert variant="outlined" severity="warning">
+        Make sure that all the details below are correct:
+      </Alert>
       <div className="container">
         <div className="row">
           <div className="col-md-6">

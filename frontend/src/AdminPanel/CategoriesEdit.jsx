@@ -1,4 +1,10 @@
-import React from "react";
+import { useForm } from "../hooks/form-hook";
+import { Error, Success } from "../Components/Message";
+import { getFetch, myFetch } from "../Utils/communication";
+
+
+
+import React, { useState, useEffect } from "react";
 import {
   CButton,
   CCard,
@@ -12,190 +18,177 @@ import {
   CInput,
   CLabel,
 } from "@coreui/react";
-import CIcon from "@coreui/icons-react";
+import { Button, ButtonGroup } from 'reactstrap';
+import { connect } from "react-redux";
 
-import { getFetch, myFetch } from "../Utils/communication";
+function CategoriesEdit(props) {
+  const [values, handleChange, setValues] = useForm({
+    link: "",
+    name: "",
+    about: "",
+  });
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [categories, setCategories] = useState([]);
 
-class CategoriesEdit extends React.Component {
-  constructor(props) {
-    super(props);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const categories = await getFetch('/category')
+        setCategories(categories)
+        // if (props.tokenProps.token) {
+        //   const i = await getFetch("/info");
+        //   setValue({ ...i });
+        // }
 
-    this.handleLoad = this.handleLoad.bind(this);
-    this.handleEdit = this.handleEdit.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
-    //ref
-    this.Link = React.createRef();
-    this.Name = React.createRef();
-    this.About = React.createRef();
-    this.Box = React.createRef();
-    this.Form = React.createRef();
-  }
+      } catch (e) {
+        //setLoggedin(false);
+      }
+    };
+    fetchData();
+  }, []);
 
-  showError(message) {
-    this.Box.current.className = "alert alert-danger";
-    this.Box.current.innerHTML = message;
-    setTimeout(() => {
-      this.Box.current.className = "d-none";
-    }, 2000);
-  }
+  // const handleLoad = async () => {
+  //   try {
+  //     if (values.link === "") {
+  //       return setError("Please provide a correct link first!");
+  //     }
+  //     const c = await getFetch(`/category/${values.link}`);
+  //     if (!c) {
+  //       return setError("This is not a valid link!");
+  //     }
+  //     setValues({ ...c });
+  //   } catch (e) {
+  //     return setError(e.message);
+  //   }
+  // };
 
-  showSuccess(message) {
-    this.Box.current.className = "alert alert-success";
-    this.Box.current.innerHTML = "<strong>Success! </strong>" + message;
-    setTimeout(() => {
-      this.Box.current.className = "d-none";
-    }, 2000);
-  }
-
-  async handleLoad() {
+  const handleDelete = async () => {
     try {
-      if (this.Link.current.value === "") {
-        return this.showError("Please provide a correct link first!");
+      if (values.link === "") {
+        return setError("Please provide a correct link first!");
       }
-      const c = await getFetch(`/category/${this.Link.current.value}`);
-      if (!c) {
-        return this.showError("This is not a valid link!");
-      }
-      this.Name.current.value = c.name;
-      if (c.about) {
-        this.About.current.value = c.about;
-      }
-    } catch (e) {
-      return this.showError(e);
-    }
-  }
-
-  async handleDelete() {
-    try {
-      if (this.Link.current.value === "") {
-        return this.showError("Please provide a correct link first!");
-      }
-      const c = await myFetch(`/category/${this.Link.current.value}`, "DELETE");
-      this.Form.current.reset();
+      const c = await myFetch(
+        `/category/${values.link}`,
+        "DELETE",
+        {},
+        props.tokenProps.token
+      );
       if (c.status === 200) {
-        return this.showSuccess("Category has been delete");
+        return setSuccess("Category has been delete");
       }
-      this.showError("Categoy could not be deleted.");
+      setError("Categoy could not be deleted.");
     } catch (e) {
-      this.showError(e);
+      setError(e.message);
     }
-  }
+  };
 
-  async handleEdit() {
+  const handleEdit = async () => {
     try {
-      if (this.Link.current.value === "") {
-        return this.showError("Please provide a correct link first!");
+      if (values.link === "") {
+        return setError("Please provide a correct link first!");
       }
-      const name = this.Name.current.value;
-      const about = this.About.current.value;
       const res = await myFetch(
-        `/category/${this.Link.current.value}`,
+        `/category/${values.link}`,
         "PATCH",
-        { name, about }
+        values,
+        props.tokenProps.token
       );
       if (res.status === 404) {
-        return this.showError("Please provide a correct link!");
+        return setError("Please provide a correct link!");
       }
       if (res.status === 200) {
-        return this.showSuccess("Category has been updated!");
+        return setSuccess("Category has been updated!");
       }
-      this.showError("Something went wrong!");
+      setError("Something went wrong!");
     } catch (e) {
-      this.showError(e);
+      setError(e.message);
     }
-  }
+  };
 
-  render() {
-    return (
-      <CCard className="container">
-        <CCardHeader>
-          Categories
-          <small> edit</small>
-        </CCardHeader>
-        <CCardBody>
-          <CForm
-            innerRef={this.Form}
-            action=""
-            method="post"
-            encType="multipart/form-data"
-            className="form-horizontal"
-          >
-            <CFormGroup row>
-              <CCol md="3">
-                <CLabel htmlFor="text-input">Category Link</CLabel>
-              </CCol>
+  return (
+    <CCard className="container">
+      <CCardHeader>
+        Categories
+        <small> edit</small>
+      </CCardHeader>
+      <CCardBody>
+        <CForm
+          action=""
+          method="post"
+          encType="multipart/form-data"
+          className="form-horizontal"
+        >
+          <CFormGroup row>
+            <CCol md="3">
+              <CLabel htmlFor="text-input">
+                Choose Category <span style={{ color: "red" }}>*</span>
+              </CLabel>
+            </CCol>
 
-              <CCol xs="12" md="9">
-                <CInput
-                  innerRef={this.Link}
-                  id="text-input"
-                  name="text-input"
-                  placeholder="Category Link (ex. herbal)"
-                />
-                <CButton
-                  type="button"
-                  onClick={this.handleLoad}
-                  size="sm"
-                  color="secondary"
-                >
-                  <CIcon name="cil-ban" /> Load Category
-                </CButton>
-                <CFormText>The link of the category.</CFormText>
-              </CCol>
-            </CFormGroup>
+            <CCol xs="12" md="9">
+            <ButtonGroup>
+            {categories.map((answer) => {
+              return (
 
-            <CFormGroup row>
-              <CCol md="3">
-                <CLabel htmlFor="text-input">Category Name</CLabel>
-              </CCol>
-              <CCol xs="12" md="9">
-                <CInput
-                  innerRef={this.Name}
-                  id="text-input"
-                  name="text-input"
-                  placeholder="Category Name (ex. Herbal)"
-                />
-                <CFormText>The name of the category.</CFormText>
-              </CCol>
-            </CFormGroup>
-            <CFormGroup row>
-              <CCol md="3">
-                <CLabel htmlFor="text-input">About</CLabel>
-              </CCol>
-              <CCol xs="12" md="9">
-                <CInput
-                  innerRef={this.About}
-                  id="text-input"
-                  name="text-input"
-                  placeholder="About (ex. Herbal food is good for you)"
-                />
-                <CFormText>Describe the category.</CFormText>
-              </CCol>
-            </CFormGroup>
-          </CForm>
-        </CCardBody>
-        <CCardFooter>
-          <CButton
-            type="button"
-            onClick={this.handleEdit}
-            size="sm"
-            color="primary"
-          >
-            <CIcon name="cil-scrubber" /> Edit
-          </CButton>
-          <CButton
-            type="button"
-            onClick={this.handleDelete}
-            size="sm"
-            color="danger"
-          >
-            <CIcon name="cil-ban" /> Delete Category
-          </CButton>
-        </CCardFooter>
-        <div ref={this.Box} className="d-none"></div>
-      </CCard>
-    );
-  }
+                <Button>{answer.name}</Button>
+              
+              );
+            })}
+            </ButtonGroup>
+              <CFormText>Please select a category.</CFormText>
+            </CCol>
+          </CFormGroup>
+
+          <CFormGroup row>
+            <CCol md="3">
+              <CLabel htmlFor="text-input">
+                Category Name<span style={{ color: "red" }}>*</span>
+              </CLabel>
+            </CCol>
+            <CCol xs="12" md="9">
+              <CInput
+                id="text-input"
+                onChange={handleChange}
+                defaultValue={values.name}
+                name="name"
+                placeholder="Category Name (ex. Herbal)"
+              />
+              <CFormText>The name of the category.</CFormText>
+            </CCol>
+          </CFormGroup>
+          <CFormGroup row>
+            <CCol md="3">
+              <CLabel htmlFor="text-input">About</CLabel>
+            </CCol>
+            <CCol xs="12" md="9">
+              <CInput
+                id="text-input"
+                onChange={handleChange}
+                defaultValue={values.about}
+                name="about"
+                placeholder="About (ex. Herbal food is good for you)"
+              />
+              <CFormText>Describe the category.</CFormText>
+            </CCol>
+          </CFormGroup>
+        </CForm>
+      </CCardBody>
+      <CCardFooter>
+        <CButton type="button" onClick={handleEdit} size="sm" color="primary">
+          <i className="fas fa-edit"></i> Edit
+        </CButton>
+        <CButton type="button" onClick={handleDelete} size="sm" color="danger">
+          <i className="fas fa-trash-alt"></i> Delete Category
+        </CButton>
+      </CCardFooter>
+      {error ? <Error error={error} /> : <Success success={success} />}
+    </CCard>
+  );
 }
 
-export default CategoriesEdit;
+const mapStateToProps = (state) => ({
+  tokenProps: state.adminToken,
+});
+
+export default connect(mapStateToProps, {})(CategoriesEdit);

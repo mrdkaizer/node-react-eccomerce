@@ -1,29 +1,21 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
+import { Alert } from "@material-ui/lab";
 
 function Announcement(props) {
   const [show, setShow] = useState(true);
 
   return props.info.announcement ? (
-    <div
-      className={
-        !show ? "d-none" : "alert alert-info alert-dismissible fade show"
-      }
-      role="alert"
+    <Alert
+      onClose={() => {
+        setShow(false);
+      }}
+      variant="filled"
+      severity="info"
+      className={!show ? "d-none" : ""}
     >
-      <button
-        type="button"
-        className="close"
-        onClick={() => {
-          setShow(false);
-        }}
-        data-dismiss="alert"
-        aria-label="Close"
-      >
-        <span aria-hidden="true">&times;</span>
-      </button>
       {props.info.announcement}
-    </div>
+    </Alert>
   ) : (
     ""
   );

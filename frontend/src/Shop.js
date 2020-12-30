@@ -24,9 +24,6 @@ import { storeState } from "./localStorage.js";
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-import "@fortawesome/fontawesome-free/css/all.min.css";
-import "bootstrap-css-only/css/bootstrap.min.css";
-
 import { Provider } from "react-redux";
 
 store.subscribe(() => {
@@ -40,7 +37,6 @@ class App extends React.Component {
         <img src="/logo.png" alt="logo" id="company-logo"></img>
         <div className="pt-3">
           <CartIcon />
-          <hr></hr>
           <Navbar />
           <Announcement />
           <div className="container">

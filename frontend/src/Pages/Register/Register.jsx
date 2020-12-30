@@ -71,8 +71,6 @@ function Register(props) {
         <br />
         <h5>Account details:</h5>
         <Form ref={formRef}>
-          <Error error={error} />
-          <Success success={success} />
           <Form.Group controlId="fullname">
             <Form.Control
               onChange={handleChange}
@@ -161,6 +159,8 @@ function Register(props) {
             CREATE
           </Button>
           <span className="p-1"></span>
+          <Error error={error} />
+          <Success success={success} />
         </Form>
       </div>
 

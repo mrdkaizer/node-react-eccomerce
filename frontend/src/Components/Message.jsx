@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Alert } from "@material-ui/lab";
 
 function Error(props) {
   const [error, setError] = useState("");
@@ -7,8 +8,9 @@ function Error(props) {
   }, [props.error]);
 
   return (
-    <div className={error === "" ? "d-none" : "alert alert-danger"}>
-      {error}
+    <div className={error === "" ? "d-none" : ""}>
+      <Alert severity="error">{error}</Alert>
+      <br />
     </div>
   );
 }
@@ -21,8 +23,9 @@ function Success(props) {
   }, [props.success]);
 
   return (
-    <div className={success === "" ? "d-none" : "alert alert-success"}>
-      {success}
+    <div className={success === "" ? "d-none" : ""}>
+      <Alert severity="success">{success}</Alert>
+      <br />
     </div>
   );
 }

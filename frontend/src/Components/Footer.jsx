@@ -66,11 +66,12 @@ function Footer(props) {
                   Contact Us<span></span>
                 </h5>
                 <p>
+                  <i className="fas fa-envelope-square"> </i>{" "}
                   <a href={`mailto:  ${siteInfo.email}`} title="glorythemes">
                     {siteInfo.email}
                   </a>
                   <br></br>
-                  {siteInfo.phone}
+                  <i className="fas fa-phone"></i> {siteInfo.phone}
                 </p>
               </div>
 

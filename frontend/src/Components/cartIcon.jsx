@@ -4,16 +4,18 @@ import { connect } from "react-redux";
 function CartIcon(props) {
   return (
     <form className="clearfix">
-      <a href="/cart">
-        <span
-          key={props.cartProps}
-          id="cart-from"
-          className="pr-4 float-right fas fa-shopping-cart"
-        >
-          {" "}
-          {props.cartProps}
-        </span>
-      </a>
+      <i
+        key={props.cartProps}
+        id="cart-from"
+        style={{ cursor: "pointer" }}
+        className="pr-4 float-right fas fa-shopping-cart"
+        onClick={() => {
+          window.location.replace("/cart");
+        }}
+      >
+        {" "}
+        {props.cartProps}
+      </i>
     </form>
   );
 }

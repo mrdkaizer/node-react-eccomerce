@@ -1,4 +1,4 @@
-import React from "react";
+import React, {  useState } from "react";
 import {
   CButton,
   CCard,
@@ -11,14 +11,23 @@ import {
   CFormText,
   CTextarea,
   CInput,
-  CInputFile,
   CInputCheckbox,
   CInputRadio,
   CLabel,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 
-const Products = () => {
+function Products(props) {
+  const [images, setImages] = useState();
+
+  const fileUpload = (e) => {
+    setImages(e.target.files);
+  };
+
+  const handleSubmit = () => {
+    console.log(images);
+  };
+
   return (
     <CCard className="container">
       <CCardHeader>
@@ -171,44 +180,17 @@ const Products = () => {
           </CFormGroup>
 
           <CFormGroup row>
-            <CLabel col md="3" htmlFor="file-input">
-              File input
-            </CLabel>
-            <CCol xs="12" md="9">
-              <CInputFile id="file-input" name="file-input" />
-            </CCol>
-          </CFormGroup>
-          <CFormGroup row>
             <CCol md="3">
-              <CLabel>Multiple File input</CLabel>
+              <CLabel>Images</CLabel>
             </CCol>
             <CCol xs="12" md="9">
-              <CInputFile
-                id="file-multiple-input"
-                name="file-multiple-input"
-                multiple
-                custom
-              />
-              <CLabel htmlFor="file-multiple-input" variant="custom-file">
-                Choose Files...
-              </CLabel>
-            </CCol>
-          </CFormGroup>
-          <CFormGroup row>
-            <CLabel col md={3}>
-              Custom file input
-            </CLabel>
-            <CCol xs="12" md="9">
-              <CInputFile custom id="custom-file-input" />
-              <CLabel htmlFor="custom-file-input" variant="custom-file">
-                Choose file...
-              </CLabel>
+              <input onChange={fileUpload} type="file" id="file" multiple />
             </CCol>
           </CFormGroup>
         </CForm>
       </CCardBody>
       <CCardFooter>
-        <CButton type="submit" size="sm" color="primary">
+        <CButton type="submit" onClick={handleSubmit} size="sm" color="primary">
           <CIcon name="cil-scrubber" /> Submit
         </CButton>
         <CButton type="reset" size="sm" color="danger">
@@ -217,6 +199,6 @@ const Products = () => {
       </CCardFooter>
     </CCard>
   );
-};
+}
 
 export default Products;

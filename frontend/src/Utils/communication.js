@@ -1,4 +1,4 @@
-const URL = "http://192.168.0.30:3001";
+const URL = "http://localhost:3001";
 
 const getFetch = async (path, token) => {
   console.log(path);

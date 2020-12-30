@@ -41,7 +41,7 @@ router.patch("/info/", adminAuth, async (req, res) => {
     updates.forEach((update) => {
       info[update] = req.body[update];
     });
-    info.save();
+    await info.save();
     res.send(info);
   } catch (e) {
     res.status(400).send(e);

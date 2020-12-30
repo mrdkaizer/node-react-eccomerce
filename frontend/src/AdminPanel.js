@@ -16,8 +16,6 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 
-import "@fortawesome/fontawesome-free/css/all.min.css";
-import "bootstrap-css-only/css/bootstrap.min.css";
 import SiteInfo from "./AdminPanel/SiteInfo";
 import NotFound from "./Components/NotFound";
 

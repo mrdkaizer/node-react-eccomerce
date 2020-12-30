@@ -1,16 +1,14 @@
-import { Form, Button } from "react-bootstrap";
 import { myFetch, getFetch } from "../../Utils/communication";
 import { addToken } from "../../actions/addAction";
 import { Error } from "../../Components/Message";
+import { useInput } from "../../hooks/input-hook";
 
 import React, { useState, useEffect } from "react";
-import { useInput } from "../../hooks/input-hook";
+import { Form, Button } from "react-bootstrap";
 import { connect } from "react-redux";
 
 function Login(props) {
-  const { value: emailValue, bind: emailBind, reset: emailReset } = useInput(
-    ""
-  );
+  const { value: emailValue, bind: emailBind } = useInput("");
   const { value: passValue, bind: passBind, reset: passReset } = useInput("");
   const [error, setError] = useState("");
   const [Loggedin, setLoggedin] = useState(false);
@@ -34,7 +32,6 @@ function Login(props) {
       email: emailValue,
       password: passValue,
     };
-    emailReset();
     passReset();
     try {
       const response = await myFetch("/user/login", "POST", data);
